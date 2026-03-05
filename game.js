@@ -32,6 +32,8 @@ const enemy = {
     maxHp: 3,
     active: false
 };
+// 0: 床, 1: 壁
+let map = [];
 
 function initMap() {
     // 全体を壁で初期化
@@ -247,6 +249,7 @@ function update() {
     }
 
     if (gameState === STATE.AWAIT_INPUT) {
+    if (!player.isMoving) {
         let dx = 0;
         let dy = 0;
 
@@ -267,8 +270,7 @@ function update() {
 
             // 画面外に出ないように境界判定を行い、さらに移動先が壁(1)でないか判定する
             if (nextX >= 0 && nextX < GRID_SIZE && nextY >= 0 && nextY < GRID_SIZE) {
-                if (map[nextY][nextX] !== 1) {
-                    // 敵にぶつかるか判定
+                if (map[nextY][nextX] !== 1) {                    // 敵にぶつかるか判定
                     if (enemy.active && enemy.hp > 0 && enemy.x === nextX && enemy.y === nextY) {
                         // 攻撃
                         enemy.hp -= 1;
