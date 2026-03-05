@@ -21,27 +21,22 @@
     }
     box.textContent += msg + "\n";
   };
-
-  window.addEventListener("error", (e) => {
-    show(`[ERROR] ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`);
-  });
-
-  window.addEventListener("unhandledrejection", (e) => {
-    show(`[REJECTION] ${String(e.reason)}`);
-  });
-
+  window.addEventListener("error", (e) => show(`[ERROR] ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`));
+  window.addEventListener("unhandledrejection", (e) => show(`[REJECTION] ${String(e.reason)}`));
   show("[DEBUG] overlay loaded");
 })();
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('gameCanvas');
+
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("gameCanvas");
   if (!canvas) {
-    document.body.innerHTML = '<pre>Canvas not found: gameCanvas</pre>';
+    document.body.innerHTML = "<pre>Canvas not found: gameCanvas</pre>";
     return;
   }
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
-  // ↓ここから下に、今あるコード全体を入れる（最後の requestAnimationFrame まで全部）
-});
+  // ✅ ここから下に「今のゲームコード全部」を入れる
+  // ただし「let map = []」は1回だけにする！
+
 
 const GRID_SIZE = 10;
 const CELL_SIZE = 32;
@@ -74,8 +69,6 @@ const enemy = {
     maxHp: 3,
     active: false
 };
-// 0: 床, 1: 壁
-let map = [];
 
 function initMap() {
     // 全体を壁で初期化
@@ -575,3 +568,4 @@ function loop() {
 
 // ゲームループの開始
 requestAnimationFrame(loop);
+}); // end DOMContentLoaded
