@@ -1,7 +1,7 @@
-// === DEBUG OVERLAY (temporary) ===
-// 画面下にエラーを出す（スマホでConsole見れない時用）
-(() => {
-  const show = (msg) => {
+document.title = "JS LOADED";
+// === DEBUG OVERLAY (temporary, robust) ===
+(function () {
+  function ensureBox() {
     let box = document.getElementById("__debug_overlay__");
     if (!box) {
       box = document.createElement("pre");
@@ -18,21 +18,21 @@
       box.style.color = "#fff";
       box.style.fontSize = "12px";
       box.style.zIndex = "999999";
-      document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
+      (document.body || document.documentElement).appendChild(box);
     }
-    box.textContent += msg + "\n";
-  };
-
-  window.addEventListener("error", (e) => {
-    show(`[ERROR] ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`);
-  });
-
-  window.addEventListener("unhandledrejection", (e) => {
-    show(`[REJECTION] ${String(e.reason)}`);
-  });
-
+    return box;
+  }
+  function show(msg) {
+    try {
+      const box = ensureBox();
+      box.textContent += msg + "\n";
+    } catch (_) {}
+  }
+  window.addEventListener("error", (e) => show(`[ERROR] ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`));
+  window.addEventListener("unhandledrejection", (e) => show(`[REJECTION] ${String(e.reason)}`));
   show("[DEBUG] overlay loaded");
 })();
+// ===== DEBUG END =====
 
 document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("gameCanvas");
