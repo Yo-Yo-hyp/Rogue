@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Original Rogue Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    canvas {
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #err {
+      position: fixed;
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 10px;
+      font-size: 12px;
+      white-space: pre-wrap;
+      z-index: 999999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <pre id="err"></pre>
+  <canvas id="gameCanvas" width="320" height="320"></canvas>
+
+  <script>
+    window.addEventListener("error", (e) => {
+      const box = document.getElementById("err");
+      box.style.display = "block";
+      box.textContent =
+        "[ERROR] " + e.message + "\n" +
+        (e.filename || "") + ":" + (e.lineno || "") + ":" + (e.colno || "");
+    });
+    window.addEventListener("unhandledrejection", (e) => {
+      const box = document.getElementById("err");
+      box.style.display = "block";
+      box.textContent = "[REJECTION] " + String(e.reason);
+    });
+  </script>
+
+  <script src="game.js?v=fix001"></script>
+</body>
+</html>
