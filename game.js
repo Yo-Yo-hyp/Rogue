@@ -1,3 +1,37 @@
+// === DEBUG OVERLAY (temporary) ===
+(() => {
+  const show = (msg) => {
+    let box = document.getElementById("__debug_overlay__");
+    if (!box) {
+      box = document.createElement("pre");
+      box.id = "__debug_overlay__";
+      box.style.position = "fixed";
+      box.style.left = "8px";
+      box.style.right = "8px";
+      box.style.bottom = "8px";
+      box.style.maxHeight = "45vh";
+      box.style.overflow = "auto";
+      box.style.whiteSpace = "pre-wrap";
+      box.style.padding = "10px";
+      box.style.background = "rgba(0,0,0,0.85)";
+      box.style.color = "#fff";
+      box.style.fontSize = "12px";
+      box.style.zIndex = "999999";
+      document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
+    }
+    box.textContent += msg + "\n";
+  };
+
+  window.addEventListener("error", (e) => {
+    show(`[ERROR] ${e.message}\n${e.filename}:${e.lineno}:${e.colno}`);
+  });
+
+  window.addEventListener("unhandledrejection", (e) => {
+    show(`[REJECTION] ${String(e.reason)}`);
+  });
+
+  show("[DEBUG] overlay loaded");
+})();
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('gameCanvas');
   if (!canvas) {
