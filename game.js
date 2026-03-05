@@ -770,8 +770,7 @@ function update() {
         return; // ゲームオーバー時は何もしない
     }
 
-    if (gameState === STATE.AWAIT_INPUT) {
-    if (!player.isMoving) {
+    if (gameState === STATE.AWAIT_INPUT) {    if (!player.isMoving) {
         let dx = 0;
         let dy = 0;
 
