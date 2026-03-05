@@ -1,5 +1,13 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('gameCanvas');
+  if (!canvas) {
+    document.body.innerHTML = '<pre>Canvas not found: gameCanvas</pre>';
+    return;
+  }
+  const ctx = canvas.getContext('2d');
+
+  // ↓ここから下に、今あるコード全体を入れる（最後の requestAnimationFrame まで全部）
+});
 
 const GRID_SIZE = 10;
 const CELL_SIZE = 32;
