@@ -10,6 +10,8 @@ const HEIGHT = GRID_SIZE * CELL_SIZE;
 // 0: 床, 1: 壁, 2: 階段
 let map = [];
 let currentDepth = 1;
+// 0: 床, 1: 壁
+let map = [];
 
 function initMap() {
     // 全体を壁で初期化
