@@ -7,6 +7,9 @@ const CELL_SIZE = 32;
 const WIDTH = GRID_SIZE * CELL_SIZE;
 const HEIGHT = GRID_SIZE * CELL_SIZE;
 
+// 0: 床, 1: 壁, 2: 階段
+let map = [];
+let currentDepth = 1;
 // 0: 床, 1: 壁
 let map = [];
 
@@ -64,6 +67,67 @@ function initMap() {
                 currentFloorCount++;
             }
         }
+    }
+
+    // --- 階段の配置 (BFS) ---
+    // プレイヤーの初期位置から到達可能な床(0)の距離を計算する
+    let distances = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+        distances[y] = [];
+        for (let x = 0; x < GRID_SIZE; x++) {
+            distances[y][x] = -1; // 未訪問
+        }
+    }
+
+    let queue = [];
+    queue.push({ x: startX, y: startY, d: 0 });
+    distances[startY][startX] = 0;
+
+    let maxDist = 0;
+
+    // BFS実行
+    while (queue.length > 0) {
+        let curr = queue.shift();
+
+        // 4方向をチェック
+        const dirs = [
+            { dx: 0, dy: -1 },
+            { dx: 0, dy: 1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 }
+        ];
+
+        for (let dir of dirs) {
+            let nx = curr.x + dir.dx;
+            let ny = curr.y + dir.dy;
+
+            // マップ内で、かつ床(0)であり、未訪問の場合
+            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                if (map[ny][nx] === 0 && distances[ny][nx] === -1) {
+                    distances[ny][nx] = curr.d + 1;
+                    queue.push({ x: nx, y: ny, d: curr.d + 1 });
+                    if (distances[ny][nx] > maxDist) {
+                        maxDist = distances[ny][nx];
+                    }
+                }
+            }
+        }
+    }
+
+    // 最大距離を持つタイルの候補を収集
+    let candidates = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+            if (distances[y][x] === maxDist) {
+                candidates.push({ x: x, y: y });
+            }
+        }
+    }
+
+    // 候補の中からランダムに1つ選んで階段(2)を配置する
+    if (candidates.length > 0) {
+        let stairPos = candidates[Math.floor(Math.random() * candidates.length)];
+        map[stairPos.y][stairPos.x] = 2;
     }
 }
 
@@ -158,6 +222,20 @@ function update() {
             player.x = player.targetX;
             player.y = player.targetY;
             player.isMoving = false;
+
+            // 階段に乗ったか判定
+            if (map[player.y][player.x] === 2) {
+                // フロア移動処理
+                currentDepth++;
+                initMap(); // 新しいマップを生成（階段も再配置される）
+                // プレイヤーを初期位置に戻す
+                player.x = 5;
+                player.y = 5;
+                player.pixelX = 5 * CELL_SIZE;
+                player.pixelY = 5 * CELL_SIZE;
+                player.targetX = 5;
+                player.targetY = 5;
+            }
         }
     }
 }
@@ -169,6 +247,19 @@ function drawMap() {
                 // 壁を描画
                 ctx.fillStyle = '#8B4513'; // 茶色
                 ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            } else if (map[y][x] === 2) {
+                // 階段を描画
+                ctx.fillStyle = '#FFD700'; // 黄色（ゴールド）
+                ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                // 階段のシンボルを描画（>の形）
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x * CELL_SIZE + 10, y * CELL_SIZE + 10);
+                ctx.lineTo(x * CELL_SIZE + 22, y * CELL_SIZE + 16);
+                ctx.lineTo(x * CELL_SIZE + 10, y * CELL_SIZE + 22);
+                ctx.stroke();
             }
         }
     }
@@ -200,6 +291,20 @@ function drawPlayer() {
     ctx.fillRect(player.pixelX + 1, player.pixelY + 1, CELL_SIZE - 2, CELL_SIZE - 2);
 }
 
+function drawUI() {
+    // 階層（Depth）を描画
+    ctx.fillStyle = '#000000';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    // 左上に背景を透過させないための小さな四角を描画
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.fillRect(2, 2, 80, 20);
+    // テキストを描画
+    ctx.fillStyle = '#000000';
+    ctx.fillText(`Depth: ${currentDepth}`, 5, 4);
+}
+
 function draw() {
     // 画面のクリア
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -208,6 +313,7 @@ function draw() {
     drawMap();
     drawGrid();
     drawPlayer();
+    drawUI();
 }
 
 function loop() {
