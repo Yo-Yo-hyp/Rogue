@@ -41,7 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
   const ctx = canvas.getContext("2d");
-
+  
+ctx.fillStyle = "#ff00ff";
+ctx.fillRect(0, 0, 32, 32);
+  
   const GRID_SIZE = 10;
   const CELL_SIZE = 32;
 
