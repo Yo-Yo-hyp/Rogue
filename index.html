@@ -7,6 +7,46 @@
   <style>
     body { display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#f0f0f0; }
     canvas { background:#fff; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    #dpad-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      touch-action: none; /* Prevent scroll on touch for the D-pad area */
+    }
+    .dpad-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .dpad-btn {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50%;
+      background: #ddd;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .dpad-btn:active {
+      background: #bbb;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      transform: translateY(2px);
+    }
     #error-overlay {
       display: none;
       position: fixed;
@@ -58,6 +98,62 @@
           msg += '\nStack: ' + event.reason.stack;
         }
         appendError(msg);
+      });
+    })();
+  </script>
+
+  <div id="dpad-container">
+    <div class="dpad-row">
+      <button id="btn-up" class="dpad-btn">↑</button>
+    </div>
+    <div class="dpad-row">
+      <button id="btn-left" class="dpad-btn">←</button>
+      <div style="width: 60px;"></div>
+      <button id="btn-right" class="dpad-btn">→</button>
+    </div>
+    <div class="dpad-row">
+      <button id="btn-down" class="dpad-btn">↓</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const controls = [
+        { id: 'btn-up', key: 'ArrowUp' },
+        { id: 'btn-down', key: 'ArrowDown' },
+        { id: 'btn-left', key: 'ArrowLeft' },
+        { id: 'btn-right', key: 'ArrowRight' }
+      ];
+
+      function dispatchKey(type, key) {
+        window.dispatchEvent(new KeyboardEvent(type, {
+          key: key,
+          code: key,
+          bubbles: true
+        }));
+      }
+
+      controls.forEach(ctrl => {
+        const btn = document.getElementById(ctrl.id);
+        if (!btn) return;
+
+        // Prevent default touch behavior (scrolling/zooming) and handle custom events
+        const startEvents = ['touchstart', 'mousedown'];
+        const endEvents = ['touchend', 'touchcancel', 'mouseup', 'mouseleave'];
+
+        startEvents.forEach(evt => {
+          btn.addEventListener(evt, (e) => {
+            e.preventDefault(); // Stop page scrolling on touch
+            dispatchKey('keydown', ctrl.key);
+          }, { passive: false });
+        });
+
+        endEvents.forEach(evt => {
+          btn.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dispatchKey('keyup', ctrl.key);
+          }, { passive: false });
+        });
       });
     })();
   </script>
