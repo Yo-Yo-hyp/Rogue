@@ -34,7 +34,6 @@ document.title = "JS LOADED";
 })();
 // ===== DEBUG END =====
 
-document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("gameCanvas");
   if (!canvas) {
     document.body.innerHTML = "<pre>Canvas not found: gameCanvas</pre>";
@@ -1053,4 +1052,3 @@ function loop() {
 }
 
 // ゲームループの開始
-requestAnimationFrame(loop);
