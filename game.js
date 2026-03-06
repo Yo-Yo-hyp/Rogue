@@ -37,7 +37,6 @@ document.title = "JS LOADED";
   const canvas = document.getElementById("gameCanvas");
   if (!canvas) {
     document.body.innerHTML = "<pre>Canvas not found: gameCanvas</pre>";
-    return;
   }
   
 const ctx = canvas.getContext("2d");
