@@ -42,16 +42,6 @@ document.title = "JS LOADED";
   
 const ctx = canvas.getContext("2d");
 
-  // === VISUAL TEST LOOP (temporary) ===
-  function testLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, 32, 32);
-    requestAnimationFrame(testLoop);
-  }
-  requestAnimationFrame(testLoop);
-  return; // ← いったんここで止める（下の処理を動かさない）
-  
   const GRID_SIZE = 10;
   const CELL_SIZE = 32;
 
