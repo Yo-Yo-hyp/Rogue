@@ -1054,4 +1054,3 @@ function loop() {
 
 // ゲームループの開始
 requestAnimationFrame(loop);
-}); // end DOMContentLoaded
